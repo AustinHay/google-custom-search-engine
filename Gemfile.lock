@@ -19,6 +19,7 @@ GEM
       multi_json (>= 1.0.0)
       signet (>= 0.5.0)
       uuidtools (>= 2.1.0)
+    json (1.8.1)
     jwt (1.2.0)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -47,6 +48,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-api-client
+  json
   retriable (~> 1.4.1)
   sass
   sinatra
