@@ -5,6 +5,13 @@ require 'retriable'
 require 'json'
 require 'sass'
 
+#HTTP Authentication for all App requests
+
+use Rack::Auth::Basic, "Access Required!" do |username, password|
+  username == 'admin' and password == 'a16z'
+end
+
+
 get '/' do
 	#Custom Search Engine ID:
 	cx = '017660767296246807512:b9eqedymv9g'
