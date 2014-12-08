@@ -1,4 +1,4 @@
-Google Custom Search API -- For use by A16Z Market Dev Team
+Google Custom Search API
 ============================================================
 
 Basics
@@ -6,7 +6,7 @@ Basics
 
 App deployed on <a href="www.austinhay.com/a16z-app">Heroku</a>.
 
-This client library is a small, simple, nimble, and scrappy Sinatra app to help conduct market research across multiple industry metrics, with specific emphasis to VC.
+This client library is a small, simple, nimble, and scrappy Sinatra app to help conduct market research across multiple industry metrics.
 
 The app is a case example of how to use, interact with, and deliver content from <b>Google custom Search API</b>. 
 
