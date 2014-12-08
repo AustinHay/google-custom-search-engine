@@ -1,18 +1,45 @@
+
 require 'rubygems'
 require 'sinatra'
 require 'google/api_client'
 require 'retriable'
 require 'json'
 require 'sass'
+require 'CSV'
 
 #HTTP Authentication for all App requests
 
 use Rack::Auth::Basic, "Access Required!" do |username, password|
-  username == 'admin' and password == 'a16z'
+  username == 'admin' and password == 'admin'
 end
 
-
 get '/' do
+
+### DATA SCRAPER ###
+@scraped_data = []
+
+csv_raw_data = File.read('public/data/input_data.csv')
+csv_new_data = CSV.parse(csv_raw_data, :headers => true)
+	i = 0
+	csv_new_data.by_col!().each do |col|
+		@scraped_data[i] = col
+		i+=1
+	end
+
+	## Remove NIL values, reformat into columns, join each as a single string
+	@raw_queries = []
+	i=0
+	@scraped_data.each do |col|
+		@raw_queries[i] = col[1].compact.join(", ")	
+		i+=1
+	end 
+#raw_queries is an array with all the possible query terms. Now you can assign each index to a different Google API variable.
+
+
+
+
+### GOOGLE CUSTOM SEARCH ENGINE ###
+
 	#Custom Search Engine ID:
 	cx = '017660767296246807512:b9eqedymv9g'
 	#Public API Key:
@@ -26,12 +53,22 @@ get '/' do
 
 	search = client.discovered_api('customsearch', 'v1')  
 
-	#Search Query: Testing to see if we can search for basic terms.
-	q = "retail, energy, government, high-tech"
+	## INSERTION OF QUERY VALUES ##
 
-	#Additional API definitions:
-	orTerms = 'CEO'
-	exactTerms = 'microsoft'
+	##SET COLUMN PARAMETERS
+	req = 0
+	#Basic, required Search Query term (q):
+	p q = @raw_queries[req]
+	@raw_queries.delete_at(req)
+
+	#OR TERMS: add depth to search
+	orTerms = []
+	@raw_queries.each do |x|
+		orTerms = orTerms.push(x)
+	end
+	p orTerms = orTerms.compact.join(", ").to_s
+
+	# exactTerms = ''
 	@num = 10
 
 	#Restricts search results to limited values: d, w, m, y[number]
@@ -54,7 +91,7 @@ get '/' do
 					key: key,
 					q: q, 
 					orTerms: orTerms,
-					exactTerms: exactTerms,
+					# exactTerms: exactTerms,
 					num: @num,
 					dateRestrict: dateRestrict,
 					lr: lr,
@@ -86,22 +123,6 @@ get '/' do
 							}
 end
 
-
-# EXTRA INFO:
-
-# require ‘google/api_client’
-# client = Google::APIClient.new
-
-# Load API definitions prior to use:
-# urlshortener = client.discovered_api(‘urlshortener’)
-
-# By calling the API user issues requests against an existing instance of a Custom Search Engine. Created in control panel.
-
-# JSON/Atom Custom Search API requires the use of an API key.
-
-
-
-# GET https://www.googleapis.com/customsearch/v1?parameters
 
 
 
